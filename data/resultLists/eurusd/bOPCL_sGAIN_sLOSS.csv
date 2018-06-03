@@ -1,0 +1,4 @@
+bOPCL0,bOPCL1,bOPCL2,sGAIN0,sLOSS0,year,lastDateTime,codeArgValStr,average,std,pipsPerHour,countPerMonth,pipsPerMonth,pipsPerMonthTotal
+10,10,15,11,30,2016,2016-01-08 04:33:00,10_10_15_11_30,0.0,0.0,0.0,0,0.0,0.0
+5,13,18,19,20,2016,2016-02-16 15:12:00,5_13_18_19_20,0.0,0.0,0.0,0,0.0,0.0
+5,14,16,20,20,2016,2016-01-12 15:42:00,5_14_16_20_20,0.0,0.0,0.0,0,0.0,0.0

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1>Results</h1>
+
+
+{% for currency in res['hasCode'] %}
+  <h2>{{ currency }}</h2>
+  <table class="table table-bordered">
+    <tr class="bg-light">
+      {% for code in res['code'] %}
+        <th>{{ code }}</th>
+      {% endfor %}
+      <th>Max</th>
+      <th>Count</th>
+      <th>Rank</th>
+      <th>Recovery</th>
+    </tr>
+
+  {% for codeStr in res['hasCode'][currency] %}
+    <tr>
+      {% for has in res['hasCode'][currency][codeStr] %}
+        {% if has == 1 %}
+        <td class="color-success">o</td>
+        {% else %}
+        <td class="color-light">x</td>
+        {% endif %}
+      {% endfor %}
+        <td>{{ res['max'][currency][codeStr] }}</td>
+        <td>{{ res['count'][currency][codeStr] }}</td>
+        <td><a class="btn btn-small" href="/results/{{ currency }}/{{ codeStr }}/">Rank</a></td>
+        <td><a class="btn btn-small btn-error" href="/reflesh/{{ currency }}/{{ codeStr }}/">Recovery</a></td>
+    </tr>
+  {% endfor %}
+  </table>
+{% endfor %}
+
+
+{% endblock %}

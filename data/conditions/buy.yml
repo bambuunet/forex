@@ -1,0 +1,261 @@
+OPCL:
+  name: openとcloseの差pips
+  argument_count: 3
+  var:
+    # minute
+    arg0: self.codeArgValSr['bOPCL0']
+    # min pips
+    arg1: self.codeArgValSr['bOPCL1'] * self.pips
+    # max pips
+    arg2: self.codeArgValSr['bOPCL2'] * self.pips
+    loop: 0
+    back: self.codeArgValSr['bOPCL0']
+    op: 0
+    cl: 0
+  put_in_loop:
+    op: self.data['Open'][i - e['arg0']]
+    cl: self.data['Close'][i - 1]
+  judge:
+    - "'short' if e['cl'] - e['op'] >= e['arg1'] and e['cl'] - e['op'] <= e['arg1'] + e['arg2'] else None"
+    - "'long' if e['op'] - e['cl'] >= e['arg1'] and e['op'] - e['cl'] <= e['arg1'] + e['arg2'] else None"
+    - "'finish' if (e['cl'] - e['op'] < e['arg1'] or e['cl'] - e['op'] > e['arg1'] + e['arg2']) and (e['op'] - e['cl'] < e['arg1'] or e['op'] - e['cl'] > e['arg1'] + e['arg2']) else None"
+  description: 1:barの数(A分間)/2:差の下限(Bpips以上)/3:下限からCpips
+  descriptions:
+    arg0: barの数(A分間)
+    arg1: 差の下限X(Bpips以上)
+    arg2: 下限からCpips
+  max:
+    arg0: 180
+    arg1: 50
+    arg2: 50
+  min:
+    arg0: 5
+    arg1: 0
+    arg2: 1
+  span:
+    arg0: 5
+    arg1: 2
+    arg2: 2
+OCLG:
+  name: openとcloseの差pips(large)
+  argument_count: 3
+  var:
+    # minute
+    arg0: self.codeArgValSr['bOCLG0']
+    # min pips
+    arg1: self.codeArgValSr['bOCLG1'] * self.pips
+    # max pips
+    arg2: self.codeArgValSr['bOCLG2'] * self.pips
+    loop: 0
+    back: self.codeArgValSr['bOCLG0']
+    op: 0
+    cl: 0
+  put_in_loop:
+    op: self.data['Open'][i - e['arg0']]
+    cl: self.data['Close'][i - 1]
+  judge:
+    - "'short' if e['cl'] - e['op'] >= e['arg1'] and e['cl'] - e['op'] <= e['arg1'] + e['arg2'] else None"
+    - "'long' if e['op'] - e['cl'] >= e['arg1'] and e['op'] - e['cl'] <= e['arg1'] + e['arg2'] else None"
+    - "'finish' if (e['cl'] - e['op'] < e['arg1'] or e['cl'] - e['op'] > e['arg1'] + e['arg2']) and (e['op'] - e['cl'] < e['arg1'] or e['op'] - e['cl'] > e['arg1'] + e['arg2']) else None"
+  description: 1:barの数(A分間)(30分間隔)/2:差の下限(Bpips以上)(10pips間隔)/3:下限からCpips(10pips間隔)
+  descriptions:
+    arg0: barの数(A分間)(30分間隔)
+    arg1: 差の下限X(Bpips以上)(10pips間隔)
+    arg2: 下限からCpips(10pips間隔)
+  max:
+    arg0: 720
+    arg1: 100
+    arg2: 100
+  min:
+    arg0: 30
+    arg1: -200
+    arg2: 10
+  span:
+    arg0: 30
+    arg1: 10
+    arg2: 10
+HILO:
+  name: highとlowの差pips(期間トータル)
+  argument_count: 3
+  var:
+    # minute
+    arg0: self.codeArgValSr['bHILO0']
+    # min pips
+    arg1: self.codeArgValSr['bHILO1'] * self.pips
+    # max pips
+    arg2: self.codeArgValSr['bHILO2'] * self.pips
+    loop: self.codeArgValSr['bHILO0']
+    back: 0
+    hi: 0
+    lo: 9999999
+  put_in_loop:
+    hi: self.data['High'][p] if self.data['High'][p] > e['hi'] else e['hi']
+    lo: self.data['Low'][p] if self.data['Low'][p] < e['lo'] else e['lo']
+  judge:
+    - "'finish' if e['hi'] - e['lo'] < e['arg1'] or e['hi'] - e['lo'] > e['arg1'] + e['arg2'] else None"
+  description: 1:barの数(A分間)/2:差の下限(Bpips以上)/3:下限からCpips
+  descriptions:
+    arg0: barの数(A分間)
+    arg1: 差の下限X(Bpips以上)
+    arg2: 下限からCpips
+  max:
+    arg0: 180
+    arg1: 50
+    arg2: 50
+  min:
+    arg0: 5
+    arg1: 1
+    arg2: 1
+  span:
+    arg0: 5
+    arg1: 2
+    arg2: 2
+HLMN:
+  name: highとlowの差pips(1minute)
+  argument_count: 3
+  var: 
+    # minute
+    arg0: self.codeArgValSr['bHLMN0']
+    # min pips
+    arg1: self.codeArgValSr['bHLMN1'] * self.pips
+    # max pips
+    arg2: self.codeArgValSr['bHLMN2'] * self.pips
+    loop: self.codeArgValSr['bHLMN0']
+    back: 0
+    max: 0
+    min: 999999
+    diff: 0
+  put_in_loop:
+    diff: self.data['High'][p] - self.data['Low'][p]
+    max: e['diff'] if e['diff'] > e['max'] else e['max']
+    min: e['diff'] if e['diff'] < e['min'] else e['min']
+  judge:
+    - "'finish' if e['min'] < e['arg1'] or e['max'] > e['arg1'] + e['arg2'] else None"
+  description: 1:barの数(A分間)/2:差の下限(Bpips以上)/3:下限からCpips
+  descriptions:
+    arg0: barの数(A分間)
+    arg1: 差の下限X(Bpips以上)
+    arg2: 下限からCpips
+  max:
+    arg0: 180
+    arg1: 50
+    arg2: 50
+  min:
+    arg0: 5
+    arg1: 0
+    arg2: 1
+  span:
+    arg0: 5
+    arg1: 1
+    arg2: 1
+PRSL:
+  name: A分間、価格帯B-Cでロング
+  argument_count: 3
+  var: 
+    # minute
+    arg0: self.codeArgValSr['bPRSL0']
+    # min price range
+    arg1: self.codeArgValSr['bPRSL1']
+    # max price range
+    arg2: self.codeArgValSr['bPRSL2']
+    loop: self.codeArgValSr['bPRSL0']
+    back: 0
+    hi: 0
+    lo: 9999999
+  put_in_loop:
+    hi: self.data['High'][p] if self.data['High'][p] > e['hi'] else e['hi']
+    lo: self.data['Low'][p] if self.data['Low'][p] < e['lo'] else e['lo']
+  judge:
+    - "'long' if e['lo'] / self.pips % 100 <= e['arg1'] and e['hi'] / self.pips % 100 >= e['arg1'] + e['arg2'] else None"
+  description: 1:barの数(A分間)/2:価格帯の下限(110.BB以上)/3:下限からCpips
+  descriptions:
+    arg0: barの数(A分間)
+    arg1: 価格帯の下限(110.BB以上)
+    arg2: 下限からCpips
+  max:
+    arg0: 180
+    arg1: 99
+    arg2: 99
+  min:
+    arg0: 5
+    arg1: 0
+    arg2: 0
+  span:
+    arg0: 5
+    arg1: 2
+    arg2: 2
+PRSS:
+  name: A分間、価格帯B-Cでショート
+  argument_count: 3
+  var: 
+    # minute
+    arg0: self.codeArgValSr['bPRSS0']
+    # min price range
+    arg1: self.codeArgValSr['bPRSS1']
+    # max price range
+    arg2: self.codeArgValSr['bPRSS2']
+    loop: self.codeArgValSr['bPRSS0']
+    back: 0
+    hi: 0
+    lo: 9999999
+  put_in_loop:
+    hi: self.data['High'][p] if self.data['High'][p] > e['hi'] else e['hi']
+    lo: self.data['Low'][p] if self.data['Low'][p] < e['lo'] else e['lo']
+  judge:
+    - "'short' if int(e['lo'] / self.pips) % 100 <= e['arg1'] and int(e['hi'] / self.pips) % 100 >= e['arg1'] + e['arg2'] else None"
+  description: 1:barの数(A分間)/2:価格帯の下限(110.BB以上)/3:下限からCpips
+  descriptions:
+    arg0: barの数(A分間)
+    arg1: 価格帯の下限(110.BB以上)
+    arg2: 下限からCpips
+  max:
+    arg0: 180
+    arg1: 99
+    arg2: 99
+  min:
+    arg0: 5
+    arg1: 0
+    arg2: 0
+  span:
+    arg0: 5
+    arg1: 2
+    arg2: 2
+MNLN:
+  name: 毎時A分にロング
+  argument_count: 1
+  var: 
+    # minute
+    arg0: self.codeArgValSr['bMNLN0']
+    loop: 0
+    back: 0
+  judge:
+    - "'long' if int(e['arg0']) == nowDateTime.minute else None"
+  description: 1:分
+  descriptions:
+    arg0: 分
+  max:
+    arg0: 59
+  min:
+    arg0: 0
+  span:
+    arg0: 0
+MNSH:
+  name: 毎時A分にショート
+  argument_count: 1
+  var: 
+    # minute
+    arg0: self.codeArgValSr['bMNSH0']
+    loop: 0
+    back: 0
+  judge:
+    - "'short' if int(e['arg0']) == nowDateTime.minute else None"
+  description: 1:分
+  descriptions:
+    arg0: 分
+  max:
+    arg0: 59
+  min:
+    arg0: 0
+  span:
+    arg0: 0
+

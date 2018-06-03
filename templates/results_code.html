@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1>Results ({{ res['codeStr'] }})</h1>
+<div class="margin-bottom-20">
+  <a href="/results/{{ res['currency'] }}/{{ res['codeStr'] }}/tactics/">Go to tactics</a>
+</div>
+
+<form action="" method="get">
+  <span>Weekday</span>
+  <select class="form-control" style="width:70px" name="weekday">
+    <option value="">All</option>
+    {% for i in range(5) %}
+      {% if res['weekday'] == i %}
+      <option value="{{ i }}" selected>{{ i }}</option>
+      {% else %}
+      <option value="{{ i }}">{{ i }}</option>
+      {% endif %}
+    {% endfor %}
+  </select>
+  <span>Hour from</span>
+  <select class="form-control" style="width:70px" name="hour_from">
+    <option value="">All</option>
+    {% for i in range(24) %}
+      {% if res['hour_from'] == i %}
+      <option value="{{ i }}" selected>{{ i }}</option>
+      {% else %}
+      <option value="{{ i }}">{{ i }}</option>
+      {% endif %}
+    {% endfor %}
+  </select>
+  <span>Hour to</span>
+  <select class="form-control" style="width:70px" name="hour_to">
+    <option value="">All</option>
+    {% for i in range(24) %}
+      {% if res['hour_to'] == i %}
+      <option value="{{ i }}" selected>{{ i }}</option>
+      {% else %}
+      <option value="{{ i }}">{{ i }}</option>
+      {% endif %}
+    {% endfor %}
+  </select>
+  <button class="btn btn-small" type="submit">Narrow</button>
+</form>
+
+<form action="" method="get">
+  <span>Order 1</span>
+  <select class="form-control" style="width:120px" name="order_1">
+    <option value=""></option>
+    {% for a in res['codeArgArr'] %}
+      <option value="{{ a }}">{{ a }}</option>
+    {% endfor %}
+    <option value="average">Average</option>
+    <option value="pipsPerMonth">Pips per hour</option>
+    <option value="countPerMonth">Count per month</option>
+    <option value="pipsPerMonth">Pips per month</option>
+  </select>
+  <select class="form-control" style="width:70px" name="order_1_reverse">
+    <option value="asc"></option>
+    <option value="desc">desc</option>
+  </select>
+  <span>Order 2</span>
+  <select class="form-control" style="width:120px" name="order_2">
+    <option value=""></option>
+    {% for a in res['codeArgArr'] %}
+      <option value="{{ a }}">{{ a }}</option>
+    {% endfor %}
+    <option value="average">Average</option>
+    <option value="pipsPerMonth">Pips per hour</option>
+    <option value="countPerMonth">Count per month</option>
+    <option value="pipsPerMonth">Pips per month</option>
+  </select>
+  <select class="form-control" style="width:60px" name="order_2_reverse">
+    <option value="asc"></option>
+    <option value="desc">desc</option>
+  </select>
+  <button class="btn btn-small" type="submit">Order</button>
+</form>
+
+<div class="">
+  <table class="table table-bordered">
+    <tr class="bg-light">
+      {% for c in res['codeArr'] %}
+        <th colspan="{{ res['condition'][c[0]][c[1:5]]['argument_count'] }}">{{ c }}</th>
+      {% endfor %}
+        <th rowspan="3">Pips per month</th>
+        <th rowspan="3">Year</th>
+        <th rowspan="3">Last date</th>
+        <th rowspan="3">Avr</th>
+        <th rowspan="3">Std</th>
+        <th rowspan="3">Pips per hour</th>
+        <th rowspan="3">Count per month</th>
+        <th rowspan="3">Pips per month</th>
+        <th rowspan="3">Get next</th>
+    </tr>
+    <tr class="bg-light">
+      {% for arg in res['argArr'] %}
+        <th>{{ arg }}</th>
+      {% endfor %}
+    </tr>
+    <tr class="bg-light">
+      {% for description in res['descriptionArr'] %}
+        <th>{{ description }}</th>
+      {% endfor %}
+    </tr>
+
+    {% for row in res['res'] %}
+      {% for calc in row['calc'] %}
+        {% if calc['no'] == 0 %}
+        <tr>
+          <form action="/reservations/add/" method="post">
+            {% for a in res['codeArgArr'] %}
+              <td rowspan="{{ row['calcLen'] }}">{{ row[a] }}</td>
+              <input type="hidden" name="{{ a }}" value="{{ row[a] }}">
+            {% endfor %}
+            <td rowspan="{{ row['calcLen'] }}">{{ row['pipsPerMonthTotal'] }}</td>
+            <td>{{ calc['year'] }}</td>
+            <td>{{ calc['lastDateTime'] }}</td>
+            <td><a href="{{ calc['link'] }}">{{ calc['average'] }}</a></td>
+            <td>{{ calc['std'] }}</td>
+            <td>{{ calc['pipsPerHour'] }}</td>
+            <td>{{ '{:,}'.format(calc['countPerMonth']) }}</td>
+            <td>{{ '{:,}'.format(calc['pipsPerMonth']) }}</td>
+            <td rowspan="{{ row['calcLen'] }}">
+              <button class="btn btn-small" type="submit">Get</button>
+            </td>
+          </form>
+        </tr>
+        {% else %}
+        <tr>
+          <td>{{ calc['year'] }}</td>
+          <td>{{ calc['lastDateTime'] }}</td>
+          <td><a href="{{ calc['link'] }}">{{ calc['average'] }}</a></td>
+          <td>{{ calc['std'] }}</td>
+          <td>{{ calc['pipsPerHour'] }}</td>
+          <td>{{ '{:,}'.format(calc['countPerMonth']) }}</td>
+          <td>{{ '{:,}'.format(calc['pipsPerMonth']) }}</td>
+        </tr>
+        {% endif %}
+      {% endfor %}
+    {% endfor %}
+  </table>
+</div>
+
+{% endblock %}

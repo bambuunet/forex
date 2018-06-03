@@ -1,0 +1,15 @@
+usdjpy:
+  pips: 0.01
+  spread: 0.5
+eurusd:
+  pips: 0.0001
+  spread: 0.8
+eurjpy:
+  pips: 0.01
+  spread: 0.9
+xxxxxx:
+  pips: 0.0001
+  spread: 0.8
+yyyyyy:
+  pips: 0.01
+  spread: 0.5

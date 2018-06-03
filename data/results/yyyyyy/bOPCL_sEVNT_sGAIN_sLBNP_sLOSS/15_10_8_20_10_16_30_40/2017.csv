@@ -1,0 +1,2 @@
+buy_at_utc,buy_price,dir,sell_at_utc,sell_price,gain,buy_at,sell_at,month,weekday,day,hour,delta
+2017-01-01 22:54:00,116.94,-1,2017-01-01 22:58:00,116.94,-0.0,2017-01-02 00:54:00,2017-01-02 00:58:00,1,0,2,0,4

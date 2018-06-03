@@ -1,0 +1,1 @@
+{"currency": "usdjpy", "year": "2017", "buy": {"MNSH": {"arg0": 30.0}}, "codeArr": ["bMNSH", "sEVNT", "sTIME"], "codeArgValArr": ["30", "20", "60"], "codeArgArr": ["bMNSH0", "sEVNT0", "sTIME0"], "sell": {"TIME": {"arg0": 60.0}, "EVNT": {"arg0": 20.0}}}

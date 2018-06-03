@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1>Result</h1>
+
+<p><a href="{{ res['backLink'] }}">Back to other results</a></p>
+
+<h2 class="color-success">Variables</h2>
+
+<ul>
+  {% for a in res['codeArgArr'] %}
+    <li>{{ a['key'] }} : {{ a['val'] }}</li>
+  {% endfor %}
+  <li>year : {{ res['year'] }}</li>
+</ul>
+
+<h2 class="color-success">Month</h2>
+<p>average per trade</p>
+<div class="x-scroll">
+  <table class="table table-bordered">
+    <tr class="bg-light">
+      <th></th>
+      {% for month in range(12) %}
+        <th>{{ month + 1 }}</th>
+      {% endfor %}
+    </tr>
+    <tr>
+      <td class="bg-light">gain(long)</td>
+      {% for month in range(12) %}
+        <td class="bg-white">
+        {% if month + 1 in res['month']['gain'] %}
+        {{ res['month']['gain'][month + 1][1] }}
+        {% endif %}
+        </td>
+      {% endfor %}
+    </tr>
+    <tr>
+      <td class="bg-light">gain(short)</td>
+      {% for month in range(12) %}
+        <td class="bg-white">
+        {% if month + 1 in res['month']['gain'] %}
+        {{ res['month']['gain'][month + 1][-1] }}
+        {% endif %}
+        </td>
+      {% endfor %}
+    </tr>
+    <tr>
+      <td class="bg-light">time delta(long)</td>
+      {% for month in range(12) %}
+        <td class="bg-white">
+        {% if month + 1 in res['month']['delta'] %}
+        {{ res['month']['delta'][month + 1][1] }}
+        {% endif %}
+        </td>
+      {% endfor %}
+    </tr>
+    <tr>
+      <td class="bg-light">time delta(short)</td>
+      {% for month in range(12) %}
+        <td class="bg-white">
+        {% if month + 1 in res['month']['delta'] %}
+        {{ res['month']['delta'][month + 1][-1] }}
+        {% endif %}
+        </td>
+      {% endfor %}
+    </tr>
+  </table>
+</div>
+
+<h2 class="color-success">Sum</h2>
+<p>Accumulative pips include spread</p>
+<div id="chart"></div>
+<p>
+  month
+  <select class="form-control" style="width:70px" id="month">
+    {% for i in range(12) %}
+      <option value="{{ i + 1 }}">{{ i + 1 }}</option>
+    {% endfor %}
+  </select>
+  day
+  <select class="form-control" style="width:70px" id="day">
+    {% for i in range(31) %}
+      <option value="{{ i + 1 }}">{{ i + 1 }}</option>
+    {% endfor %}
+  </select>
+  <a class="btn btn-small" id="btnDayData">Go to day data</a>
+</p>
+
+<script>
+  var sumLabel = ['x'];
+  var sumLong = ['long'].concat({{ res['sumLong'] }});
+  var sumShort = ['short'].concat({{ res['sumShort'] }});
+  var netGain = ['gain'].concat({{ res['netGain'] }});
+  var netGainLong = ['gain(only long)'].concat({{ res['netGainLong'] }});
+  var netGainShort = ['gain(only short)'].concat({{ res['netGainShort'] }});
+  var close = ['close'].concat({{ res['close'] }});
+  {% for s in res['sumLabel'] %}
+    sumLabel.push(String({{ s[0:4] }} + '-' + {{ s[4:6] }} + '-' + {{ s[6:8] }}))
+  {% endfor %}
+
+  var chart = c3.generate({
+    data: {
+      x: 'x',
+      columns: [
+        sumLabel,
+        sumLong,
+        sumShort,
+        netGain,
+        netGainLong,
+        netGainShort,
+        close
+      ],
+      axes: {
+        sumLong: 'y',
+        sumShort: 'y',
+        netGain: 'y',
+        netGainLong: 'y',
+        netGainShort: 'y',
+        close: 'y2'
+      },
+    },
+    axis: {
+      x: {
+        type: 'timeseries',
+        tick: {
+          format: '%m-%d'
+        }
+      },
+      y2: {
+        show: true
+      }
+    },
+    grid: {
+      y:{
+        show : true,
+        lines : [{value:0}]
+      }
+    },
+    point: {
+      show: false // ポイントの表示
+    },
+    subchart: {
+      show: true
+    },
+    zoom: {
+      enabled: true
+    },
+    size: {
+      height: 500
+    },
+  });
+
+
+  $('#chart').find('.c3-event-rect').on('click', function(){
+    console.log('a')
+    var date = $('.c3-tooltip-container').find('th').text();
+    var month = date.substr(0,2);
+    var day = date.substr(3,2);
+    window.location.href = month + '/' + day + '/';
+  });
+
+  $('#btnDayData').on('click', function(){
+    window.location.href = $('#month').val() + '/' + $('#day').val() + '/';
+  });
+</script>
+
+
+<h2 class="color-success">Weekday / Hour</h2>
+<p>pips per hour</p>
+<h3>Long</h3>
+<div class="x-scroll">
+  <table class="table table-bordered text-right" >
+    <tr class="bg-light">
+      <th></th>
+      {% for hour in range(24) %}
+        <th>{{ hour }}</th>
+      {% endfor %}
+      <th style="border-left: double">Σ</th>
+    </tr>
+
+    {% for weekday in range(5) %}
+      <tr>
+        <td class="bg-light">{{ weekday }}</td>
+        {% for hour in range(24) %}
+          <td class="bg-white">
+          {% if 1 in res['weekdayHourPipsPerHour'] %}
+            {% if weekday in res['weekdayHourPipsPerHour'][1] %}
+              {% if hour in res['weekdayHourPipsPerHour'][1][weekday] %}
+                {% if res['weekdayHourPipsPerHour'][1][weekday][hour] > 0 %}
+                  <span>{{ res['weekdayHourPipsPerHour'][1][weekday][hour] }}</span>
+                {% else %}
+                  <span class="color-error">{{ res['weekdayHourPipsPerHour'][1][weekday][hour] }}</span>
+                {% endif %}
+              {% endif %}
+            {% endif %}
+          {% endif %}
+          </td>
+        {% endfor %}
+        <td class="bg-white" style="border-left: double">
+        {% if 1 in res['weekdayPipsPerHour'] %}
+          {% if weekday in res['weekdayPipsPerHour'][1] %}
+            {% if res['weekdayPipsPerHour'][1][weekday] > 0 %}
+              <span>{{ res['weekdayPipsPerHour'][1][weekday] }}</span>
+            {% else %}
+              <span class="color-error">{{ res['weekdayPipsPerHour'][1][weekday] }}</span>
+            {% endif %}
+          {% endif %}
+        {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+
+    <tr>
+      <td class="bg-light" style="border-top: double">Σ</td>
+      {% for hour in range(24) %}
+        <td class="bg-white" style="border-top: double">
+          {% if 1 in res['hourPipsPerHour'] %}
+            {% if hour in res['hourPipsPerHour'][1] %}
+              {% if res['hourPipsPerHour'][1][hour] > 0 %}
+                <span>{{ res['hourPipsPerHour'][1][hour] }}</span>
+              {% else %}
+                <span class="color-error">{{ res['hourPipsPerHour'][1][hour] }}</span>
+              {% endif %}
+            {% endif %}
+          {% endif %}
+        </td>
+      {% endfor %}
+      <td class="bg-white" style="border-top: double; border-left: double">
+      {% if 1 in res['pipsPerHour'] %}
+        {% if res['pipsPerHour'][1] > 0 %}
+          <span>{{ res['pipsPerHour'][1] }}</span>
+        {% else %}
+          <span class="color-error">{{ res['pipsPerHour'][1] }}</span>
+        {% endif %}
+      {% endif %}
+      </td>
+    </tr>
+  </table>
+</div>
+
+<h3>Short</h3>
+<div class="x-scroll">
+  <table class="table table-bordered text-right" >
+    <tr class="bg-light">
+      <th></th>
+      {% for hour in range(24) %}
+        <th>{{ hour }}</th>
+      {% endfor %}
+      <th style="border-left: double">Σ</th>
+    </tr>
+
+    {% for weekday in range(5) %}
+      <tr>
+        <td class="bg-light">{{ weekday }}</td>
+        {% for hour in range(24) %}
+          <td class="bg-white">
+          {% if -1 in res['weekdayHourPipsPerHour'] %}
+            {% if weekday in res['weekdayHourPipsPerHour'][-1] %}
+              {% if hour in res['weekdayHourPipsPerHour'][-1][weekday] %}
+                {% if res['weekdayHourPipsPerHour'][-1][weekday][hour] > 0 %}
+                  <span>{{ res['weekdayHourPipsPerHour'][-1][weekday][hour] }}</span>
+                {% else %}
+                  <span class="color-error">{{ res['weekdayHourPipsPerHour'][-1][weekday][hour] }}</span>
+                {% endif %}
+              {% endif %}
+            {% endif %}
+          {% endif %}
+          </td>
+        {% endfor %}
+        <td class="bg-white" style="border-left: double">
+        {% if -1 in res['weekdayPipsPerHour'] %}
+          {% if weekday in res['weekdayPipsPerHour'][-1] %}
+            {% if res['weekdayPipsPerHour'][-1][weekday] > 0 %}
+              <span>{{ res['weekdayPipsPerHour'][-1][weekday] }}</span>
+            {% else %}
+              <span class="color-error">{{ res['weekdayPipsPerHour'][-1][weekday] }}</span>
+            {% endif %}
+          {% endif %}
+        {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+
+    <tr>
+      <td class="bg-light" style="border-top: double">Σ</td>
+      {% for hour in range(24) %}
+          <td class="bg-white" style="border-top: double">
+          {% if -1 in res['hourPipsPerHour'] %}
+            {% if hour in res['hourPipsPerHour'][-1] %}
+              {% if res['hourPipsPerHour'][-1][hour] > 0 %}
+                <span>{{ res['hourPipsPerHour'][-1][hour] }}</span>
+              {% else %}
+                <span class="color-error">{{ res['hourPipsPerHour'][-1][hour] }}</span>
+              {% endif %}
+            {% endif %}
+          {% endif %}
+          </td>
+      {% endfor %}
+      <td class="bg-white" style="border-top: double; border-left: double">
+      {% if -1 in res['pipsPerHour'] %}
+        {% if res['pipsPerHour'][-1] > 0 %}
+          <span>{{ res['pipsPerHour'][-1] }}</span>
+        {% else %}
+          <span class="color-error">{{ res['pipsPerHour'][-1] }}</span>
+        {% endif %}
+      {% endif %}
+      </td>
+    </tr>
+  </table>
+</div>
+
+<table class="table table-bordered" >
+  <tr class="bg-light">
+    <th>Buy at</th>
+    <th>Buy price</th>
+    <th>Sell at</th>
+    <th>Sell price</th>
+    <th>Dir</th>
+    <th>Gain</th>
+    <th>Delta</th>
+  </tr>
+{% for i in res['result'].T %}
+  {% if res['result']['gain'][i] > 0 %}
+    <tr>
+      <td>{{ res['result']['buy_at'][i] }}</td>
+      <td>{{ res['result']['buy_price'][i] }}</td>
+      <td>{{ res['result']['sell_at'][i] }}</td>
+      <td>{{ res['result']['sell_price'][i] }}</td>
+      <td>{{ res['result']['dir'][i] }}</td>
+      <td>{{ '%0.1f'| format(res['result']['gain'][i]) }}</td>
+      <td>{{ res['result']['delta'][i] }}</td>
+    </tr>
+  {% else %}
+    <tr class="color-error">
+      <td>{{ res['result']['buy_at'][i] }}</td>
+      <td>{{ res['result']['buy_price'][i] }}</td>
+      <td>{{ res['result']['sell_at'][i] }}</td>
+      <td>{{ res['result']['sell_price'][i] }}</td>
+      <td>{{ res['result']['dir'][i] }}</td>
+      <td>{{ '%0.1f'| format(res['result']['gain'][i]) }}</td>
+      <td>{{ res['result']['delta'][i] }}</td>
+    </tr>
+  {% endif %}
+{% endfor %}
+</table>
+
+{% endblock %}

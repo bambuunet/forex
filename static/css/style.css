@@ -1,0 +1,80 @@
+/*+:｡.｡ ｡.｡:+* *+:｡.｡ ｡.｡:+* *+:｡.｡ ｡.｡:+* 
+
+    共通
+
+ *+:｡.｡ ｡.｡:+* *+:｡.｡ ｡.｡:+* *+:｡.｡ ｡.｡:+*/
+
+@import url(http://fonts.googleapis.com/css?family=Khand);
+
+body {
+  font-size: 16px !important;
+  font-weight: 300;
+  margin: 20px auto;
+  width: 95%;
+}
+
+body, h1, h2, h3, button, select, svg {
+  font-family: 'Khand', sans-serif !important;
+}
+
+header {
+  margin: 0 0 20px 0;
+}
+
+footer {
+  border-top: solid 1px #ccccff;
+  padding: 10px 0 0 0;
+}
+
+a {
+  text-decoration: underline;
+}
+
+button {
+  font-weight: 900;
+}
+
+.title a {
+  font-size: 32px;
+  text-decoration: none;
+}
+
+.globalNav li {
+  display: inline-block;
+  padding: 5px 20px 5px 0;
+}
+
+.globalNav-pulldown {
+  display: none;
+  position: absolute;
+  background: #ecf0f1;
+  border: solid 1px #ddd;
+}
+
+.globalNav a {
+  text-decoration: none;
+}
+
+.x-scroll {
+  overflow: auto;
+  white-space: nowrap;
+}
+
+@media screen and (min-width: 768px) {
+}
+
+
+/*+:｡.｡ ｡.｡:+* *+:｡.｡ ｡.｡:+* *+:｡.｡ ｡.｡:+* 
+
+    c3.js
+
+ *+:｡.｡ ｡.｡:+* *+:｡.｡ ｡.｡:+* *+:｡.｡ ｡.｡:+*/
+
+
+
+.c3-region.regionLong {
+  fill: #4378a7;
+}
+.c3-region.regionShort {
+  fill: #E74C3C;
+}

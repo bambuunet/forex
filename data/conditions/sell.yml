@@ -1,0 +1,132 @@
+EVNT:
+  name: イベントの開始前
+  argument_count: 1
+  var: 
+    loop: 0
+    arg0: self.codeArgValSr['sEVNT0']
+    back: self.codeArgValSr['sEVNT0']
+  judge: 
+    - "'finish' if eventDateTime - dt.datetime.strptime(str(self.data['Date'][ii]) + str(self.data['Timestamp'][ii]), '%Y%m%d%H:%M:%S') <= dt.timedelta(minutes=int(e['arg0'])) else None"
+  description: 1:イベントの終了時刻N分前
+  descriptions:
+    arg0: イベントの終了時刻N分前
+  max:
+    arg0: 20
+  min:
+    arg0: 20
+  span:
+    arg0: 10
+GAIN:
+  name: 利益Npips以上
+  argument_count: 1
+  var: 
+    loop: 0
+    arg0: self.codeArgValSr['sGAIN0'] * self.pips
+    back: 0
+  judge: 
+    - "'finish' if buyDir == 1 and self.data['High'][ii - 1] - buyPrice >= e['arg0'] else None"
+    - "'finish' if buyDir == -1 and buyPrice - self.data['Low'][ii - 1] >= e['arg0'] else None"
+  description: 1:利益Npips以上
+  descriptions:
+    arg0: 利益Npips以上
+  max:
+    arg0: 100
+  min:
+    arg0: 1
+  span:
+    arg0: 2
+LOSS:
+  name: 損失Npips以上
+  argument_count: 1
+  var: 
+    loop: 0
+    arg0: self.codeArgValSr['sLOSS0'] * self.pips
+    back: 0
+  judge: 
+    - "'finish' if buyDir == 1 and self.data['Low'][ii - 1] - buyPrice <= - e['arg0'] else None"
+    - "'finish' if buyDir == -1 and buyPrice - self.data['High'][ii - 1] <= - e['arg0'] else None"
+  description: 1:損失Npips以上
+  descriptions:
+    arg0: 損失Npips以上
+  max:
+    arg0: 100
+  min:
+    arg0: 1
+  span:
+    arg0: 2
+LBND:
+  name: 損失Mpips以上からNpips回復
+  argument_count: 2
+  var: 
+    loop: ii - i
+    back: 0
+    arg0: self.codeArgValSr['sLBND0'] * self.pips
+    arg1: self.codeArgValSr['sLBND1'] * self.pips
+    hi: 0
+    lo: 9999999
+  put_in_loop:
+    hi: self.data['High'][p] if self.data['High'][p] > e['hi'] else e['hi']
+    lo: self.data['Low'][p] if self.data['Low'][p] < e['lo'] else e['lo']
+  judge: 
+    - "'finish' if buyDir == 1 and buyPrice - e['lo'] > e['arg0'] and self.data['High'][ii - 1] - e['lo'] > e['arg1'] else None"
+    - "'finish' if buyDir == -1 and e['hi'] - buyPrice > e['arg0'] and e['hi'] - self.data['Low'][ii - 1] > e['arg1'] else None"
+  description: 1:最大損失Mpips/2:Npips回復
+  descriptions:
+    arg0: 最大損失Mpips
+    arg1: Npips回復
+  max:
+    arg0: 100
+    arg1: 100
+  min:
+    arg0: 1
+    arg1: 1
+  span:
+    arg0: 2
+    arg1: 5
+LBNP:
+  name: 損失Mpips以上からN%回復
+  argument_count: 2
+  var: 
+    loop: ii - i
+    back: 0
+    arg0: self.codeArgValSr['sLBNP0'] * self.pips
+    arg1: self.codeArgValSr['sLBNP1'] * self.pips
+    hi: 0
+    lo: 9999999
+  put_in_loop:
+    hi: self.data['High'][p] if self.data['High'][p] > e['hi'] else e['hi']
+    lo: self.data['Low'][p] if self.data['Low'][p] < e['lo'] else e['lo']
+  judge: 
+    - "'finish' if buyDir == 1 and buyPrice - e['lo'] > e['arg0'] and (self.data['High'][ii - 1] - e['lo']) / (buyPrice - e['lo']) > (e['arg1'] / 100) else None"
+    - "'finish' if buyDir == -1 and e['hi'] - buyPrice > e['arg0'] and (e['hi'] - self.data['Low'][ii - 1]) / (e['hi'] - buyPrice) > (e['arg1'] / 100) else None"
+  description: 1:最大損失Mpips/2:N%回復
+  descriptions:
+    arg0: 最大損失Mpips
+    arg1: N%回復
+  max:
+    arg0: 100
+    arg1: 100
+  min:
+    arg0: 1
+    arg1: 1
+  span:
+    arg0: 2
+    arg1: 10
+TIME:
+  name: N分で決済
+  argument_count: 1
+  var:
+    loop: 0
+    arg0: self.codeArgValSr['sTIME0']
+    back: self.codeArgValSr['sTIME0']
+  judge: 
+    - "'finish' if ii - i >= e['back'] else None"
+  description: 1:N分
+  descriptions:
+    arg0: N分
+  max:
+    arg0: 300
+  min:
+    arg0: 5
+  span:
+    arg0: 10

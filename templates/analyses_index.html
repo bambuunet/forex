@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1>Analyses</h1>
+
+{% for analysisName in res['link'] %}
+<h2 class="color-success">{{ analysisName  }}</h2>
+
+  <table class="table table-bordered">
+  {% for currency in res['link'][analysisName] %}
+
+    {% for year in res['link'][analysisName][currency] %}
+      <tr>
+        <td>{{ currency }}</td>
+        <td>{{ year }}</td>
+        <td><a href="{{ res['link'][analysisName][currency][year] }}">Normal</a></td>
+        <td><a href="{{ res['link'][analysisName][currency][year] }}log/">Log</a></td>
+      </tr>
+    {% endfor %}
+    
+  {% endfor %}
+  </table>
+
+{% endfor %}
+
+{% endblock %}
