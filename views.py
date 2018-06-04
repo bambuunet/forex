@@ -26,7 +26,6 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DATA_DIR = BASE_DIR + '/data/'
 SIMULATION_CMD = ''
 
-
 if 'PYTHON_ENV' in os.environ and os.environ["PYTHON_ENV"] == 'local':
   SIMULATION_CMD = 'python ' + BASE_DIR + '/simulate.py'
   SIMULATION_RELATE_CMD = 'python ' + BASE_DIR + '/simulate_relate.py'
@@ -66,9 +65,7 @@ error_file_handler.setFormatter(formatter)
 
 
 
-@app.route('/test/', methods=['POST', 'GET'])
-def test():
-  return render_template('test.html')
+
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -833,47 +830,7 @@ def simulationKill():
     pass
   return redirect('/results/')
 
-@app.route('/analyses/', methods=['POST', 'GET'])
-def analysisIndex():
-  res = {}
-  res['link'] = {}
-  for analysisName in X.getAnalysisNameArr():
-    res['link'][analysisName] = {}
-    for currency in X.getAnalysisCurrencyArr(analysisName):
-      res['link'][analysisName][currency] = {}
-      for year in X.getAnalysisYearArr(analysisName, currency):
-        res['link'][analysisName][currency][year] = '/'.join([analysisName, currency, year, ''])
 
-  return render_template('analyses_index.html', res=res)
-
-
-@app.route('/analyses/<analysisName>/<currency>/<year>/', methods=['POST', 'GET'])
-def analysisDetail(analysisName, currency, year):
-  res = {}
-  res['analysisName'] = analysisName
-  data = X.getAnalysis(analysisName, currency, year)
-  data = np.histogram(data['res'], bins=30)
-  res['val'] = data[0].tolist()
-  res['label'] = data[1].tolist()  
-
-  return render_template('analyses_detail.html', res=res)
-
-@app.route('/analyses/<analysisName>/<currency>/<year>/log/', methods=['POST', 'GET'])
-def analysisDetailLog(analysisName, currency, year):
-  res = {}
-  res['analysisName'] = analysisName
-  data = X.getAnalysis(analysisName, currency, year)
-  for i in range(len(data['res'])):
-    data['res'][i] = math.log(data['res'][i])
-  data = np.histogram(data['res'], bins=30)
-  res['val'] = data[0].tolist()
-  res['label'] = []
-  for label in data[1]:
-    res['label'].append(math.e ** label)
-  #res['label'] = data[1].tolist()
-  
-  
-  return render_template('analyses_detail_log.html', res=res)
 
 if __name__ == "__main__":
     app.run(debug=True)

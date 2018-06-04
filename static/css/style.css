@@ -9,6 +9,7 @@
 body {
   font-size: 16px !important;
   font-weight: 300;
+  letter-spacing: 0.1em;
   margin: 20px auto;
   width: 95%;
 }
@@ -78,3 +79,23 @@ button {
 .c3-region.regionShort {
   fill: #E74C3C;
 }
+.c3 text{
+  font-size: 14px;
+}
+
+
+/*+:｡.｡ ｡.｡:+* *+:｡.｡ ｡.｡:+* *+:｡.｡ ｡.｡:+* 
+
+    table(mini)
+
+ *+:｡.｡ ｡.｡:+* *+:｡.｡ ｡.｡:+* *+:｡.｡ ｡.｡:+*/
+
+table.mini-table {
+  background-color: inherit;
+}
+
+table.mini-table td{
+  padding: 5px;
+  border: solid 1px #ddd;
+}
+

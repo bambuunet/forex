@@ -3,6 +3,21 @@
 {% block body %}
 <h1>Analysis ({{ res['analysisName'] }})</h1>
 
+<table class="mini-table">
+  <tr>
+    <td>μ</td>
+    <td>{{ res['average'] }}</td>
+  </tr>
+  <tr>
+    <td>$$σ^{2}$$</td>
+    <td>{{ res['variance'] }}</td>
+  </tr>
+  <tr>
+    <td>$$σ$$</td>
+    <td>{{ res['stdev'] }}</td>
+  </tr>
+</table>
+
 <div id="chart"></div>
 <script>
   var x = ['x'];

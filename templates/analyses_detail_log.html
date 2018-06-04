@@ -3,17 +3,32 @@
 {% block body %}
 <h1>Analysis ({{ res['analysisName'] }})</h1>
 
+<table class="mini-table">
+  <tr>
+    <td>μ</td>
+    <td>{{ res['average'] }}</td>
+  </tr>
+  <tr>
+    <td>$$σ^{2}$$</td>
+    <td>{{ res['variance'] }}</td>
+  </tr>
+  <tr>
+    <td>$$σ$$</td>
+    <td>{{ res['stdev'] }}</td>
+  </tr>
+</table>
+
 <div id="chart"></div>
 <script>
   var x = ['x'];
   var price = ['price'];
 
-  var label = ['x'].concat({{ res['label'] }});
-  /*var label = ['x'];
+  //var label = ['x'].concat({{ res['label'] }});
+  var label = ['x'];
   var label_tmp = {{ res['label'] }};
   for(var i = 0; i < label_tmp.length; i++){
-    label.push(String(Math.exp(label_tmp[i])))
-  };*/
+    label.push(String(Math.round(label_tmp[i] * 100) / 100) + ' (' + String(Math.round(Math.exp(label_tmp[i]) * 100) / 100) + ')')
+  };
   var val = ['value'].concat({{ res['val'] }});
 
   var chart = c3.generate({
@@ -30,7 +45,12 @@
     },
     axis: {
       x: {
-        type: 'category'
+        type: 'category',
+        tick: {
+            rotate: 45,
+            multiline: false
+        },
+        height: 70
       }
     },
     grid: {
