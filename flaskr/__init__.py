@@ -6,10 +6,11 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from flaskr import views, analyses
 
 app = Flask(__name__)
-app.config.from_object('flaskr.config')
+app.register_blueprint(views.app)
+app.register_blueprint(analyses.app)
 
 
 formatter = logging.Formatter(
@@ -31,9 +32,3 @@ error_file_handler = RotatingFileHandler(
 error_file_handler.setLevel(logging.ERROR)
 error_file_handler.setFormatter(formatter)
 app.logger.addHandler(error_file_handler)
-
-
-
-db = SQLAlchemy(app)
-
-import flaskr.views
